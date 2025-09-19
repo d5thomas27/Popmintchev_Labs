@@ -2,6 +2,18 @@ import os
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+import tifffile as tiff  
+
+def load_gray16(path):
+    rgb = tiff.imread(path).astype(np.float64)      # shape (H,W,3)
+    if rgb.ndim != 3 or rgb.shape[-1] < 3:
+        raise ValueError("Expected an RGB image.")
+    # Luminance (Rec. 601)
+    y = 0.299*rgb[...,0] + 0.587*rgb[...,1] + 0.114*rgb[...,2]
+    # Expand 12-bit range [0,4095] -> 16-bit [0,65535]
+    y16 = np.clip(y * (65535.0/4095.0), 0, 65535).astype(np.uint16)
+    return y16
+
 
 img_dir = 
 out_dir = 
